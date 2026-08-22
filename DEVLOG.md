@@ -321,3 +321,22 @@ Playwright なら `chromium.launch({ args:['--enable-features=WebContentsForceDa
   同じ理由で動いていない。もし直して有効化すると、Pages は1リポジトリ1サイトなので
   本ワークフローと同じサイトを奪い合うことになる。公開先を分けるなら
   出力先ディレクトリを分ける（例: `_site/kingpetition/`）などの調整が要る。
+
+---
+
+## 2026-08-23 — KingPetition単体リポジトリのPagesデプロイワークフロー復旧
+
+### 事象
+「アイコン反映」のコミット後に GitHub Pages に変更が反映されなかった。
+
+### 原因
+`OriginalGames/.github/workflows/deploy-kingpetition.yml` を作成した際に、
+単体リポジトリ側の `KingPetition/.github/workflows/deploy.yml` を削除していた。
+そのため、単体リポジトリ `day0817/KingPetition` への push で GitHub Actions が実行されず、
+`https://day0817.github.io/KingPetition/` のデプロイが止まっていた。
+
+### 対応
+- `KingPetition/.github/workflows/deploy.yml` を作成し、単体リポジトリ `day0817/KingPetition` へコミット＆プッシュ。
+- `https://day0817.github.io/KingPetition/` へのデプロイ成功と `src/ui/icons.js` の反映を確認。
+- 親リポジトリ `OriginalGames` にも同様に反映。
+
