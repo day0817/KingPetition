@@ -163,3 +163,15 @@ export const CARD_BY_ID = Object.fromEntries(CARDS.map((c) => [c.id, c]));
 export function cardArt(id) {
   return `assets/cards/${id}.jpg`;
 }
+
+/**
+ * アプリが実際に表示するカード肖像画のID。
+ *
+ * 盤面のカードはSVGアイコン（src/ui/icons.js）に置き換えたので、肖像画を使うのは
+ * 国王を獲得したときの最終ラウンド案内だけ。
+ *
+ * ここが「使う画像」の唯一の定義。公開ビルド
+ * （.github/workflows/deploy-kingpetition.yml）もこの配列を読んで画像を選ぶので、
+ * 使う画像を増やすときは必ずここに足すこと。
+ */
+export const USED_ART_IDS = ['king', 'queen'];

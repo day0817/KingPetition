@@ -2,8 +2,9 @@
 // ルールの判断はすべて engine 側にあり、ここでは対象選択のフローだけを面倒みる。
 
 import { Game, DIFFICULTIES } from '../game/engine.js';
-import { CARD_BY_ID, cardArt } from '../game/cards.js';
+import { CARDS, CARD_BY_ID, cardArt, USED_ART_IDS } from '../game/cards.js';
 import { abilitySpec } from '../game/abilities.js';
+import { iconLegend } from './icons.js';
 import { Rng, hashSeed, todayKey } from '../game/rng.js';
 import { getSettings, saveSettings, getHighScores, recordScore } from '../game/storage.js';
 import * as R from './render.js';
@@ -415,7 +416,7 @@ function showFinalIntro() {
   showOverlay(
     R.el('h2', { text: '国王を説得した' }),
     R.el('p', { class: 'ov-lead', text: '王妃も味方についた。最後にもう一度だけダイスを振り、王冠にふさわしい出目を示せ。' }),
-    R.el('div', { class: 'value-row' }, ['king', 'queen'].map((id) =>
+    R.el('div', { class: 'value-row' }, USED_ART_IDS.map((id) =>
       R.el('img', { src: cardArt(id), alt: '', style: 'width:98px;height:108px;border-radius:8px;object-fit:cover' }))),
     R.el('p', { class: 'ov-lead', text: '最終ラウンドは同じ目をできるだけ多く揃えるのが目的。数が同じなら目が大きいほうが強い。' }),
     R.el('div', { class: 'ov-actions' }, [
@@ -495,7 +496,12 @@ function showRules() {
       <h3>ソロの目標</h3>
       <p>制限ラウンド内に国王を獲得すれば成功。そのあと最終ラウンドを1回行い、
       同じ目をできるだけ多く揃えると王冠ボーナスが増えます。</p>
+
+      <h3>カードの見かた</h3>
+      <p>まだ持っていないカードには<strong>獲得条件</strong>と<strong>効果</strong>、
+      手に入れたカードには<strong>効果</strong>だけが表示されます。</p>
     ` }),
+    iconLegend(CARDS),
     R.el('div', { class: 'ov-actions' }, [
       R.el('button', { type: 'button', class: 'btn btn-primary', text: '閉じる', onclick: hideOverlay }),
     ]),

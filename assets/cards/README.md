@@ -1,6 +1,15 @@
 # assets/cards/ — キャラクターカード画像
 
-20種のカード肖像画（98×108px / JPEG）。アプリ内でカードの絵として使用する。
+20種のカード肖像画（98×108px / JPEG）。
+
+> ℹ️ **現在の用途**: 宮廷（カード一覧）と所持カードの表示は **SVGアイコン**（`src/ui/icons.js`）に
+> 置き換えたため、肖像画を使っているのは **国王を獲得したときの最終ラウンド案内だけ** です。
+> 演出用に残してあります。
+>
+> 🚀 **公開ビルドに入るのは、実際に使う `king.jpg` / `queen.jpg` の2枚だけ**です。
+> どの画像を使うかは `src/game/cards.js` の **`USED_ART_IDS`** が唯一の定義で、
+> `.github/workflows/deploy-kingpetition.yml` もその配列を読んでコピーします。
+> 使う画像を増やすときは `USED_ART_IDS` に足してください（そこに足すだけで公開物にも入ります）。
 
 - 出典: peca卓ゲwiki「王への請願 / カード一覧」 https://w.atwiki.jp/peer-takuge/pages/18.html
 - ファイル名は `src/game/cards.js` のカードID（英字）と一対一で対応する。

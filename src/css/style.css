@@ -1,6 +1,14 @@
 /* 王への請願（ソロ） — 王宮テーマ */
 
+/*
+ * このアプリは初めから暗い配色。
+ * color-scheme を宣言しないと、Android Chrome の「ウェブコンテンツを強制ダークモード」が
+ * 明るい面（クリーム色のダイス、金色のボタン）を勝手に反転させて真っ暗にしてしまう。
+ * index.html の <meta name="color-scheme"> と対になっている。
+ */
 :root {
+  color-scheme: dark;
+
   --bg: #17122a;
   --bg-2: #1f1838;
   --panel: #2a2149;
@@ -33,7 +41,12 @@ html, body {
   line-height: 1.6;
 }
 
-button { font: inherit; color: inherit; }
+button {
+  font: inherit;
+  color: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
 
 .screen { max-width: 1180px; margin: 0 auto; padding: 16px; }
 [hidden] { display: none !important; }
@@ -59,6 +72,13 @@ button { font: inherit; color: inherit; }
   font-weight: 700;
 }
 .btn-primary:hover:not(:disabled) { background: linear-gradient(180deg, #f7d477, #b8912f); }
+/* 金色を半透明にすると濁って「壊れている」ように見えるので、無効時は平らな色に落とす */
+.btn-primary:disabled {
+  background: var(--panel-2);
+  border-color: var(--line);
+  color: var(--ink-dim);
+  opacity: 1;
+}
 .btn-ghost { background: transparent; }
 .btn-lg { padding: 13px 28px; font-size: 1.05rem; width: 100%; }
 .btn-sm { padding: 5px 10px; font-size: .85rem; }
@@ -280,7 +300,10 @@ button { font: inherit; color: inherit; }
   cursor: pointer;
   text-align: left;
 }
-.owned-card img { width: 26px; height: 29px; border-radius: 4px; object-fit: cover; }
+.owned-card .oc-icon { display: block; flex: none; }
+.owned-card .ic-note { display: none; }
+.owned-card .ic-die { width: 12px; height: 12px; }
+.owned-card .ic-sym { width: 10px; height: 10px; }
 .owned-card .oc-name { font-size: .8rem; font-weight: 600; }
 .owned-card .oc-tag { display: block; font-size: .66rem; color: var(--ink-dim); }
 .owned-card.is-usable { border-color: var(--gold); }
@@ -307,29 +330,44 @@ button { font: inherit; color: inherit; }
   font-weight: 700;
   color: var(--gold);
 }
-.level-cards { display: flex; gap: 8px; flex-wrap: wrap; }
+.level-cards { display: flex; gap: 8px; flex-wrap: wrap; align-items: stretch; }
 
 .card-tile {
-  width: 104px;
+  width: 118px;
   border: 1px solid var(--line);
   background: var(--panel);
   border-radius: 10px;
-  padding: 6px;
+  padding: 7px 6px;
   text-align: center;
   cursor: default;
+  display: flex;
+  flex-direction: column;
   transition: transform .1s ease, border-color .15s ease;
 }
-.card-tile img { width: 100%; aspect-ratio: 98 / 108; object-fit: cover; border-radius: 6px; display: block; }
-.card-tile .ct-name { font-size: .8rem; font-weight: 700; margin-top: 4px; }
-.card-tile .ct-req { font-size: .64rem; color: var(--ink-dim); line-height: 1.35; margin-top: 2px; }
+.card-tile .ct-name { font-size: .8rem; font-weight: 700; margin-bottom: 5px; }
+.ct-slot {
+  border-radius: 7px;
+  background: rgba(0, 0, 0, .2);
+  padding: 4px 3px 5px;
+  margin-bottom: 4px;
+}
+.ct-slot-eff { background: rgba(232, 184, 75, .09); }
+.ct-slot-label {
+  display: block;
+  font-size: .58rem;
+  letter-spacing: .1em;
+  color: var(--ink-dim);
+  margin-bottom: 3px;
+}
 .card-tile.is-claimable { border-color: var(--gold); box-shadow: 0 0 14px rgba(232, 184, 75, .25); }
 .card-tile.is-claimable.is-choosable { cursor: pointer; }
 .card-tile.is-choosable:hover { transform: translateY(-2px); }
 .card-tile.is-chosen { border-color: var(--ok); box-shadow: 0 0 0 2px var(--ok); }
 .card-tile.is-owned { border-color: var(--ok); }
-.card-tile.is-owned img { filter: none; }
 .card-tile.is-gone { opacity: .3; }
 .card-tile .ct-badge {
+  margin-top: auto;
+  align-self: center;
   font-size: .62rem;
   border-radius: 5px;
   padding: 0 4px;
@@ -393,7 +431,7 @@ button { font: inherit; color: inherit; }
   .board { grid-template-columns: 1fr; }
   .panel-log { max-height: 160px; }
   .market-level { grid-template-columns: 34px 1fr; }
-  .card-tile { width: 88px; }
+  .card-tile { width: 108px; }
   .title-main { font-size: 2rem; }
 }
 @media (max-width: 420px) {
@@ -401,6 +439,55 @@ button { font: inherit; color: inherit; }
   .screen { padding: 10px; }
   .die { width: 40px; height: 40px; padding: 5px; }
   .die .pip { width: 7px; height: 7px; }
-  .card-tile { width: calc(33.333% - 6px); }
+  .card-tile { width: calc(50% - 5px); }
+  .legend-item { grid-template-columns: 96px 1fr; }
   .meter-label { display: none; }
 }
+
+
+/* ---------- 条件・効果のアイコン ---------- */
+
+.ic-block { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.ic-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  min-height: 15px;
+}
+.ic-group { display: flex; gap: 1.5px; }
+.ic-die { width: 15px; height: 15px; flex: none; }
+.ic-sym { width: 13px; height: 13px; flex: none; color: var(--gold); }
+.ic-note { font-size: .6rem; line-height: 1.3; color: var(--ink-dim); }
+
+.ic-face { fill: #f2ead6; stroke: #7a6647; stroke-width: 1; }
+.ic-pip { fill: #2b2340; }
+.ic-ring { fill: none; stroke: #2b2340; stroke-width: 1.6; }
+.ic-mark { fill: none; stroke: #2b2340; stroke-width: 1.5; stroke-linecap: round; }
+
+.ic-die.tone-b .ic-face { fill: #cdc4ee; stroke: #5b4f8a; }
+.ic-die.tone-c .ic-face { fill: #f0c3b6; stroke: #8a5a4c; }
+.ic-die.tone-fix .ic-face { fill: #bfe0cc; stroke: #4d7a62; }
+.ic-die.tone-new .ic-face { fill: #f3d68a; stroke: #a8842c; }
+.ic-die.tone-q .ic-face { fill: rgba(232, 184, 75, .16); stroke: var(--gold); stroke-dasharray: 2.4 1.8; }
+.ic-die.tone-q .ic-mark, .ic-die.tone-q .ic-pip { stroke: var(--gold); fill: none; }
+.ic-die.tone-q .ic-pip { fill: var(--gold); }
+
+.ic-sym .ic-stroke { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.ic-sym .ic-stroke.ic-bold { stroke-width: 2.2; }
+.ic-sym .ic-fill { fill: currentColor; }
+
+/* 遊び方の凡例 */
+.legend-block h3 { color: var(--gold); font-size: .95rem; margin: 18px 0 6px; }
+.legend-grid { display: grid; gap: 8px; }
+.legend-item {
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  gap: 10px;
+  align-items: center;
+  background: rgba(0, 0, 0, .18);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.legend-label { font-size: .82rem; color: var(--ink-dim); }

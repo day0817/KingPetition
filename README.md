@@ -14,10 +14,10 @@ KingPetition/
 ├── DEVLOG.md        実装経過ログ（判断の理由・詰まった点）
 ├── index.html       画面の骨格
 ├── docs/rules/      ★ルール仕様（確定版・実装の唯一の参照先）
-├── assets/cards/    カード画像20枚（ファイル名＝カードID）
+├── assets/cards/    カード肖像画20枚（現在は最終ラウンド案内の演出のみで使用）
 ├── src/
 │   ├── game/        ゲームロジック（DOM非依存・テスト対象）
-│   ├── ui/          画面描画・入力
+│   ├── ui/          画面描画・入力（icons.js が条件/効果のSVGアイコン）
 │   └── css/         スタイル
 └── test/            node --test 用テスト
 ```
@@ -31,6 +31,9 @@ KingPetition/
 5. 確定した全ダイスの出目でカードを1枚獲得する
 
 カードは「常時ダイスが増える」ものと「1手番に1回使える」ものがあります。
+宮廷に並ぶカードには、まだ持っていないうちは **獲得条件と効果** のアイコンが、
+手に入れたあとは **効果** のアイコンだけが表示されます。
+アイコンの意味は「遊び方」の凡例にまとめてあります。
 制限ラウンド内に **同じ目を7つ** 揃えて国王を獲得できれば成功。
 そのあと最終ラウンドを1回行い、揃えた目の数と大きさが王冠ボーナスになります。
 
@@ -42,6 +45,28 @@ KingPetition/
 ビルドツール・外部依存なしの素の HTML + CSS + JavaScript (ES Modules)。
 `npm install` 不要で、静的サーバに置くだけで動きます。
 `package.json` は `type: module` の宣言とスクリプトのためだけに置いてあり、依存パッケージはありません。
+
+## 公開（GitHub Pages）
+
+`main` の `KingPetition/` に push すると、リポジトリ直下の
+`.github/workflows/deploy-kingpetition.yml` が GitHub Pages へ公開します。
+
+公開されるのは **遊ぶのに必要なファイルだけ**（約150KB）:
+
+| 公開する | 公開しない |
+|---|---|
+| `index.html` / `src/` / `assets/favicon.svg` | `docs/`（ルール仕様） |
+| 実際に使う肖像画2枚（`USED_ART_IDS`） | `test/` / `*.md` / `package.json` |
+| | 使っていない肖像画18枚 |
+
+デプロイ前に `node --test` と、公開物の参照チェック（index.html が参照するファイルと
+`USED_ART_IDS` の画像が揃っているか）が走ります。
+
+> ⚠️ **初回だけ手作業が必要です。**
+> リポジトリの **Settings → Pages → Build and deployment → Source を「GitHub Actions」** に変更してください。
+> （Pages サイトの新規作成APIは admin 権限が必要で、ワークフローの `GITHUB_TOKEN` では実行できません）
+> 設定後、Actions から `Deploy KingPetition to Pages` を Re-run すれば公開されます。
+> 公開先: `https://day0817.github.io/OriginalGames/`
 
 ## 起動
 
@@ -78,5 +103,5 @@ node --test        # npm test でも同じ
 ## 注意
 
 本アプリは個人利用を目的とした非公式のファン実装です。
-カード画像は peca卓ゲwiki（https://w.atwiki.jp/peer-takuge/pages/18.html）から取得したものを
-そのまま使用しています。再配布・商用利用はしません。
+カード肖像画は peca卓ゲwiki（https://w.atwiki.jp/peer-takuge/pages/18.html）から取得したものです。
+再配布・商用利用はしません。盤面のカード表示は自前のSVGアイコンです。

@@ -1,8 +1,9 @@
 // 画面の描画。状態を受け取ってDOMを組み立てるだけで、ゲームの判断はしない。
 
-import { CARDS, LEVEL_LABELS, cardArt } from '../game/cards.js';
+import { CARDS, LEVEL_LABELS } from '../game/cards.js';
 import { describeReq } from '../game/requirements.js';
 import { DIFFICULTIES } from '../game/engine.js';
+import { conditionIcon, effectIcon } from './icons.js';
 
 const PIPS = {
   1: [[2, 2]],
@@ -70,10 +71,10 @@ export function renderOwned(container, game, onUse) {
       type: 'button',
       class: `owned-card${st.usable ? ' is-usable' : ''}`,
       disabled: !st.usable,
-      title: card.abilityText,
+      title: `${card.name}\n効果: ${card.abilityText}`,
       onclick: () => onUse(card),
     }, [
-      el('img', { src: cardArt(card.id), alt: '' }),
+      el('span', { class: 'oc-icon' }, [effectIcon(card)]),
       el('span', {}, [
         el('span', { class: 'oc-name', text: card.name }),
         el('span', { class: 'oc-tag', text: tag }),
@@ -105,14 +106,21 @@ export function renderMarket(container, game, { choosable = [], chosen = null, o
         if (canPick && onChoose) classes.push('is-choosable');
         if (chosen === card.id) classes.push('is-chosen');
 
+        // 獲得前は「条件＋効果」、獲得後は「効果」だけを見せる
         return el('div', {
           class: classes.join(' '),
           title: `${card.name}\n条件: ${reqText(card)}\n効果: ${card.abilityText}`,
           onclick: canPick && onChoose ? () => onChoose(card.id) : null,
         }, [
-          el('img', { src: cardArt(card.id), alt: card.name, loading: 'lazy' }),
           el('div', { class: 'ct-name', text: card.name }),
-          el('div', { class: 'ct-req', text: reqText(card) }),
+          owned ? null : el('div', { class: 'ct-slot ct-slot-req' }, [
+            el('span', { class: 'ct-slot-label', text: '条件' }),
+            conditionIcon(card),
+          ]),
+          el('div', { class: 'ct-slot ct-slot-eff' }, [
+            el('span', { class: 'ct-slot-label', text: '効果' }),
+            effectIcon(card),
+          ]),
           owned ? el('span', { class: 'ct-badge owned', text: '獲得済み' })
             : gone ? el('span', { class: 'ct-badge gone', text: '無し' }) : null,
         ]);
