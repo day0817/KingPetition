@@ -340,3 +340,13 @@ Playwright なら `chromium.launch({ args:['--enable-features=WebContentsForceDa
 - `https://day0817.github.io/KingPetition/` へのデプロイ成功と `src/ui/icons.js` の反映を確認。
 - 親リポジトリ `OriginalGames` にも同様に反映。
 
+---
+
+## 2026-08-23 — フローティング獲得ボタンの追加（スマホ操作性向上）
+
+### やったこと
+- スマホ等で画面をスクロールして宮廷カードを選択した際、上に戻らずそのまま獲得できるよう、画面右下にフローティング獲得ボタン（`.floating-claim`）を追加。
+- 既存のロールアクション欄のボタンはそのまま維持。
+- 獲得フェーズでカードが選択された時にスライドインで表示、未選択や他フェーズでは非表示。
+
+

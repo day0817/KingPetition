@@ -248,6 +248,40 @@ button {
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .actions .btn { flex: 1 1 auto; }
 
+/* フローティング獲得ボタン（スクロール時用） */
+.floating-claim {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: float-slide-up .2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.floating-claim[hidden] {
+  display: none;
+}
+.btn-floating-claim {
+  padding: 12px 22px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(232, 184, 75, 0.5);
+  cursor: pointer;
+  letter-spacing: .04em;
+}
+@keyframes float-slide-up {
+  from {
+    transform: translateY(16px) scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
 /* 能力の対象選択バナー */
 .ability-banner {
   background: linear-gradient(180deg, rgba(232, 184, 75, .18), rgba(232, 184, 75, .07));

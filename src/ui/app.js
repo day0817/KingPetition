@@ -27,6 +27,7 @@ const dom = {
   abilityBanner: $('ability-banner'),
   owned: $('owned-cards'),
   market: $('market'),
+  floatingClaim: $('floating-claim'),
   log: $('log'),
   overlay: $('overlay'),
   overlayBody: $('overlay-body'),
@@ -169,7 +170,30 @@ function renderActions() {
         onclick: () => doClaim(null),
       }),
     );
+
+    // 画面右下のフローティング獲得ボタン（カード選択時に表示）
+    if (dom.floatingClaim) {
+      if (chosen) {
+        dom.floatingClaim.hidden = false;
+        dom.floatingClaim.replaceChildren(
+          R.el('button', {
+            type: 'button',
+            class: 'btn btn-primary btn-floating-claim',
+            text: `${CARD_BY_ID[chosen].name} を獲得する`,
+            onclick: () => doClaim(chosen),
+          })
+        );
+      } else {
+        dom.floatingClaim.hidden = true;
+        dom.floatingClaim.replaceChildren();
+      }
+    }
     return;
+  }
+
+  if (dom.floatingClaim) {
+    dom.floatingClaim.hidden = true;
+    dom.floatingClaim.replaceChildren();
   }
 
   if (game.phase !== 'roll') { actions.replaceChildren(); return; }
