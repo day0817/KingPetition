@@ -1,0 +1,96 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: ゲームロジックのテスト
+        run: node --test
+
+      - name: 公開ファイルを集める
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site
+          mkdir -p _site/assets/cards
+          cp index.html _site/
+          cp -R src _site/src
+          cp assets/favicon.svg _site/assets/
+          for id in $(node -e "import('./src/game/cards.js').then(m => console.log(m.USED_ART_IDS.join(' ')))"); do
+            cp "assets/cards/$id.jpg" "_site/assets/cards/$id.jpg"
+          done
+          find _site -name '*.md' -delete
+          echo '--- 公開されるファイル ---'
+          find _site -type f | sort
+          du -sh _site
+
+      - name: 公開物の検証
+        run: |
+          set -euo pipefail
+          cat > /tmp/check-site.mjs <<'SCRIPT'
+          import { existsSync, readFileSync } from 'node:fs';
+          import { join, resolve } from 'node:path';
+          import { pathToFileURL } from 'node:url';
+
+          const site = '_site';
+          const html = readFileSync(join(site, 'index.html'), 'utf8');
+          const refs = [...html.matchAll(/(?:src|href)="([^"#:]+)"/g)].map((m) => m[1]);
+          const missing = refs.filter((r) => !existsSync(join(site, r)));
+
+          if (missing.length) {
+            console.error('index.html が参照するファイルが公開物にありません:', missing);
+            process.exit(1);
+          }
+          const cardsUrl = pathToFileURL(resolve('src/game/cards.js')).href;
+          const { USED_ART_IDS, cardArt } = await import(cardsUrl);
+          const artMissing = USED_ART_IDS.filter((id) => !existsSync(join(site, cardArt(id))));
+          if (artMissing.length) {
+            console.error('USED_ART_IDS の画像が公開物にありません:', artMissing);
+            process.exit(1);
+          }
+
+          console.log(`OK: index.html の参照 ${refs.length} 件と画像 ${USED_ART_IDS.length} 件を確認`);
+          SCRIPT
+          node /tmp/check-site.mjs
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
