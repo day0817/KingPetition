@@ -1,0 +1,11 @@
+{
+  "name": "king-petition-solo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ボードゲーム『王への請願』のソロプレイ用デジタルアプリ（依存ゼロ・ビルド不要）",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "start": "python3 -m http.server 8080"
+  }
+}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>王への請願 — ソロ</title>
+<meta name="description" content="ボードゲーム『王への請願』のソロプレイ用アプリ">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+
+<!-- ============ タイトル ============ -->
+<section id="screen-title" class="screen screen-title">
+  <div class="title-card">
+    <p class="title-kicker">SOLO</p>
+    <h1 class="title-main">王への請願</h1>
+    <p class="title-lead">サイコロを振り、廷臣を味方につける。<br>同じ目を7つ揃えて、国王を説得せよ。</p>
+
+    <div class="field">
+      <span class="field-label">難易度</span>
+      <div id="difficulty-picker" class="chip-row"></div>
+    </div>
+    <div class="field">
+      <span class="field-label">出目</span>
+      <div id="mode-picker" class="chip-row"></div>
+    </div>
+
+    <button id="btn-start" class="btn btn-primary btn-lg">請願をはじめる</button>
+    <button id="btn-rules" class="btn btn-ghost">遊び方</button>
+
+    <div id="highscores" class="highscores"></div>
+  </div>
+</section>
+
+<!-- ============ ゲーム ============ -->
+<section id="screen-game" class="screen screen-game" hidden>
+  <header class="topbar">
+    <button id="btn-title" class="btn btn-ghost btn-sm" title="タイトルへ">◀</button>
+    <div class="meter">
+      <span class="meter-label">ラウンド</span>
+      <strong id="meter-round">1 / 12</strong>
+    </div>
+    <div class="meter">
+      <span class="meter-label">ダイス</span>
+      <strong id="meter-dice">3</strong>
+    </div>
+    <div class="meter meter-wide">
+      <span class="meter-label">獲得</span>
+      <strong id="meter-cards">0</strong>
+    </div>
+    <button id="btn-rules-2" class="btn btn-ghost btn-sm" title="遊び方">?</button>
+  </header>
+
+  <main class="board">
+    <div class="dice-panel">
+      <div id="ability-banner" class="ability-banner" hidden></div>
+
+      <div class="dice-group">
+        <h2 class="group-head">確定済み <span id="fixed-count" class="group-count">0</span></h2>
+        <div id="fixed-dice" class="dice-row dice-row-fixed"></div>
+      </div>
+
+      <div class="dice-group">
+        <h2 class="group-head">未確定 <span id="active-count" class="group-count">3</span></h2>
+        <div id="active-dice" class="dice-row"></div>
+      </div>
+
+      <p id="hand-hint" class="hand-hint"></p>
+      <div id="roll-actions" class="actions"></div>
+    </div>
+
+    <aside class="side">
+      <section class="panel">
+        <h2 class="panel-head">所持カード</h2>
+        <div id="owned-cards" class="owned-row"></div>
+      </section>
+      <section class="panel panel-log">
+        <h2 class="panel-head">記録</h2>
+        <div id="log" class="log-body"></div>
+      </section>
+    </aside>
+  </main>
+
+  <section class="market">
+    <h2 class="panel-head">宮廷 <span class="panel-note">獲得できるカードが光ります</span></h2>
+    <div id="market" class="market-levels"></div>
+  </section>
+</section>
+
+<!-- ============ オーバーレイ ============ -->
+<div id="overlay" class="overlay" hidden>
+  <div id="overlay-body" class="overlay-body" role="dialog" aria-modal="true"></div>
+</div>
+
+<script type="module" src="src/ui/app.js"></script>
+</body>
+</html>
