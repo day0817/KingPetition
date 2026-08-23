@@ -136,12 +136,24 @@ export function renderLog(container, log) {
     ])));
 }
 
+export function formatHighScoreDetail(entry) {
+  if (!entry) return '';
+  if (entry.kingRound && entry.crown && entry.crown.value && entry.crown.count) {
+    return `${entry.kingRound}ラウンドに${entry.crown.value}を${entry.crown.count}コ集めた`;
+  }
+  return '';
+}
+
 export function renderHighScores(container, scores) {
   const rows = Object.values(DIFFICULTIES).map((d) => {
     const s = scores[d.id];
+    const detail = formatHighScoreDetail(s);
     return el('div', { class: 'hs-row' }, [
-      el('span', { text: d.label }),
-      el('b', { text: s ? `${s.total} 点` : '—' }),
+      el('div', { class: 'hs-meta' }, [
+        el('span', { class: 'hs-label', text: d.label }),
+        detail ? el('small', { class: 'hs-detail', text: detail }) : null,
+      ]),
+      el('b', { class: 'hs-total', text: s ? `${s.total} 点` : '—' }),
     ]);
   });
   container.replaceChildren(

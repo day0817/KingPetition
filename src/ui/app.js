@@ -454,7 +454,14 @@ function showFinalIntro() {
 
 function showResult() {
   const r = game.result();
-  const entry = { total: r.total, at: new Date().toISOString(), seed: game.seed };
+  const entry = {
+    total: r.total,
+    success: r.success,
+    kingRound: game.kingRound,
+    crown: r.crown ? { value: r.crown.value, count: r.crown.count } : null,
+    at: new Date().toISOString(),
+    seed: game.seed,
+  };
   const isBest = recordScore(game.difficulty.id, entry);
 
   const table = R.el('table', { class: 'score-table' },

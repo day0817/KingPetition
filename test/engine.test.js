@@ -159,3 +159,15 @@ test('獲得できないカードは claim できない', () => {
   assert.equal(g.claim('king').ok, false);
   assert.equal(g.claim('queen').ok, false, '王妃は直接獲得できない');
 });
+
+test('ハイスコア詳細表記のフォーマット', async () => {
+  const { formatHighScoreDetail } = await import('../src/ui/render.js');
+  assert.equal(
+    formatHighScoreDetail({ kingRound: 8, crown: { value: 6, count: 8 } }),
+    '8ラウンドに6を8コ集めた'
+  );
+  assert.equal(formatHighScoreDetail(null), '');
+  assert.equal(formatHighScoreDetail({ total: 300 }), '');
+  assert.equal(formatHighScoreDetail({ success: false, kingRound: null, crown: null }), '');
+});
+
